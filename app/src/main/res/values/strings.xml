@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Lockphone</string>
+
+    <string name="skip">Saltar Intro</string>
+    <string name="action_settings">Settings</string>
+    <string name="insured">Ya tengo seguro</string>
+    <string name="phone_info_header">Informacion del Telefono</string>
+    <string name="brand">Marca</string>
+    <string name="model">Modelo</string>
+    <string name="imei">IMEI</string>
+    <string name="insured_value">Valor Asegurado</string>
+    <string name="montly_cost">Costo Mensual</string>
+    <string name="deductible">Deducible</string>
+    <string name="imgUrl_pattern">img class=\"tel\" src=\"([^\"]+)</string>
+    <string name="imei_empty_image_base_url">http://www.imei.info/</string>
+    <string name="imei_site_base_url">http://www.imei.info</string>
+    <string name="imei_api_base_url">http://www.imei.info/api</string>
+    <string name="imei_user">dcoellar</string>
+    <string name="imei_password">dcoburei</string>
+</resources>
