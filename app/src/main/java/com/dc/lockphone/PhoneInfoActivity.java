@@ -1,6 +1,7 @@
 package com.dc.lockphone;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,13 +26,14 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
         buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(activity, PhoneInfoActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(activity, RegisterActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter, R.anim.exit);
             }
         });
 
         if (((LockphoneApplication) getApplication()).getPhoneInfo() != null){
-            updateDate();
+            updateData();
         }else{
             ((LockphoneApplication) getApplication()).getListeners().add(this);
         }
@@ -40,11 +42,23 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
     @Override
     public void getPhoneInfoCallback() {
         if (((LockphoneApplication) getApplication()).getPhoneInfo() != null){
-            updateDate();
+            PhoneInfo phoneInfo = ((LockphoneApplication) getApplication()).getPhoneInfo();
+            if (phoneInfo.getImei() == null || phoneInfo.getImei().toString().equalsIgnoreCase("")){
+                //TODO - show user error screen could not get imei
+            }else if(phoneInfo.getBrand() == null || phoneInfo.getBrand().toString().equalsIgnoreCase("")
+                    || phoneInfo.getModel() == null || phoneInfo.getModel().toString().equalsIgnoreCase("")
+                    || phoneInfo.getInsuranceValue() == null || phoneInfo.getInsuranceValue().toString().equalsIgnoreCase("")
+                    || phoneInfo.getInsuranceMontlyCost() == null || phoneInfo.getInsuranceMontlyCost().toString().equalsIgnoreCase("")
+                    || phoneInfo.getDeductible() == null || phoneInfo.getDeductible().toString().equalsIgnoreCase("")
+                    ){
+                //TODO -show user error screen could not get brand data
+            }else{
+                updateData();
+            }
         }
     }
 
-    private void updateDate(){
+    private void updateData(){
         PhoneInfo phoneInfo = ((LockphoneApplication) getApplication()).getPhoneInfo();
 
         TextView txtBrand = (TextView)findViewById(R.id.brand);
@@ -59,5 +73,11 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
                 .load(phoneInfo.getImageUrl())
                 .into(img);
 
+        TextView txtInsuredValue = (TextView)findViewById(R.id.insured_value);
+        txtInsuredValue.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceValue()));
+        TextView txtMontlyCost = (TextView)findViewById(R.id.montly_cost);
+        txtMontlyCost.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceMontlyCost()));
+        TextView txtDeductible = (TextView)findViewById(R.id.deductible);
+        txtDeductible.setText("$ " + String.format("%.2f", phoneInfo.getDeductible()));
     }
 }

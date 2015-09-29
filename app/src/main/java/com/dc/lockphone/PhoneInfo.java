@@ -11,6 +11,10 @@ public class PhoneInfo {
     private String internal_model;
     private String imei;
     private String imageUrl;
+    private Double insuranceValue;
+    private Double insuranceMontlyCost;
+    private Double deductible;
+    private String error;
 
     public PhoneInfo(){
     }
@@ -61,5 +65,37 @@ public class PhoneInfo {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public Double getInsuranceValue() {
+        return insuranceValue;
+    }
+
+    public void setInsuranceValue(Double insuranceValue) {
+        this.insuranceValue = insuranceValue;
+    }
+
+    public Double getInsuranceMontlyCost() {
+        return insuranceMontlyCost;
+    }
+
+    public void setInsuranceMontlyCost(Double insuranceMontlyCost) {
+        this.insuranceMontlyCost = insuranceMontlyCost;
+    }
+
+    public Double getDeductible() {
+        return deductible;
+    }
+
+    public void setDeductible(Double deductible) {
+        this.deductible = deductible;
     }
 }

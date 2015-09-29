@@ -18,6 +18,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -69,19 +70,21 @@ public class LockphoneApplication extends Application {
             TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             phoneInfo.setImei(mngr.getDeviceId());
 
-            if (phoneInfo.getImei() != null && !phoneInfo.getImei().isEmpty()) {
+            if (phoneInfo.getImei() != null && !phoneInfo.getImei().equalsIgnoreCase("")) {
 
                 getImeiFromParse(phoneInfo.getImei());
 
             } else {
                 Log.e("ERROR", "Could not get imei");
-                //TODO - alert user about not geting imei
+                phoneInfo.setError("Could not get imei");
+                callListeners();
             }
 
         }catch (Exception e){
             Log.e("ERROR", e.getMessage());
             Log.e("ERROR", e.getStackTrace().toString());
-            //TODO - alert user about getting info
+            phoneInfo.setError("Error getting imei");
+            callListeners();
         }
     }
 
@@ -94,13 +97,24 @@ public class LockphoneApplication extends Application {
             public void done(ParseObject object, ParseException e) {
                 if (e == null && object != null) {
                     try {
-
                         ParseObject brand = object.getParseObject("brand").fetchIfNeeded();
                         phoneInfo.setBrand(brand.getString("brand"));
                         phoneInfo.setModel(brand.getString("model"));
                         phoneInfo.setInternal_brand(brand.getString("internalBrand"));
                         phoneInfo.setInternal_model(brand.getString("internalModel"));
                         phoneInfo.setImageUrl(brand.getString("imageUrl"));
+
+                        Calendar today = Calendar.getInstance();
+                        int todayYear = today.get(Calendar.YEAR);
+                        int year = brand.getInt("year");
+
+                        Double insurance = brand.getDouble("insurance");
+                        Double depreciation = brand.getDouble("depreciation");
+                        Double insuranceValue = insurance - ((todayYear - year) * (insurance * (depreciation/100)));
+
+                        phoneInfo.setInsuranceValue(insuranceValue);
+                        phoneInfo.setInsuranceMontlyCost(brand.getDouble("price"));
+                        phoneInfo.setDeductible(brand.getDouble("deductible"));
 
                         callListeners();
 
@@ -133,6 +147,18 @@ public class LockphoneApplication extends Application {
                     phoneInfo.setInternal_brand(object.getString("internalBrand"));
                     phoneInfo.setInternal_model(object.getString("internalModel"));
                     phoneInfo.setImageUrl(object.getString("imageUrl"));
+
+                    Calendar today = Calendar.getInstance();
+                    int todayYear = today.get(Calendar.YEAR);
+                    int year = object.getInt("year");
+
+                    Double insurance = object.getDouble("insurance");
+                    Double depreciation = object.getDouble("depreciation");
+                    Double insuranceValue = insurance - ((todayYear - year) * (insurance * (depreciation/100)));
+
+                    phoneInfo.setInsuranceValue(insuranceValue);
+                    phoneInfo.setInsuranceMontlyCost(object.getDouble("price"));
+                    phoneInfo.setDeductible(object.getDouble("deductible"));
 
                     final ParseObject parseDevice = new ParseObject("Devices");
                     parseDevice.put("imei", imei);
@@ -227,13 +253,15 @@ public class LockphoneApplication extends Application {
                                     } catch (Exception e) {
                                         Log.e("ERROR", e.getMessage());
                                         Log.e("ERROR", e.getStackTrace().toString());
+                                        phoneInfo.setError("Error getting brand from site");
+                                        callListeners();
                                     }
                                 }
 
                                 @Override
                                 public void failure(RetrofitError error) {
                                     Log.d("ERROR", "second retrofit fail:" + error.getMessage());
-                                    //TODO - alert user about not geting imei
+                                    phoneInfo.setError("Error getting brand from site");
                                 }
 
                             });
@@ -241,24 +269,28 @@ public class LockphoneApplication extends Application {
                         } catch (Exception e) {
                             Log.e("ERROR", e.getMessage());
                             Log.e("ERROR", e.getStackTrace().toString());
-                            //TODO - alert user about getting infor
+                            phoneInfo.setError("Error getting brand from site");
+                            callListeners();
                         }
                     } else {
                         Log.d("ERROR", "imei info error:" + result.get("error").getAsString());
-                        //TODO - alert user about not geting imei
+                        phoneInfo.setError("Error getting brand from site");
+                        callListeners();
                     }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
-                    Log.d("ERROR", "first retrofit fail:" + error.getMessage());
-                    //TODO - alert user about not geting imei
+                    Log.e("ERROR", "first retrofit fail:" + error.getMessage());
+                    phoneInfo.setError("Error getting brand from site");
+                    callListeners();
                 }
             });
         }catch (Exception e) {
             Log.e("ERROR", e.getMessage());
             Log.e("ERROR", e.getStackTrace().toString());
-            //TODO - alert user about getting info
+            phoneInfo.setError("Error getting brand from site");
+            callListeners();
         }
     }
 

@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".LaunchActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,6 +23,12 @@
         </activity>
         <activity
             android:name=".PhoneInfoActivity">
+        </activity>
+        <activity
+            android:name=".RegisterActivity">
+        </activity>
+        <activity
+            android:name=".PayActivity">
         </activity>
     </application>
 
