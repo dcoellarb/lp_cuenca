@@ -1,55 +1,89 @@
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/black">
-    <ImageView
-        android:id="@+id/main_image_background2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/tutorial2"
-        android:scaleType="fitXY"/>
-    <ImageView
-        android:id="@+id/main_image_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/tutorial1"
-        android:scaleType="fitXY"/>
+    android:background="@color/white"
+    tools:context=".MainActivity">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:background="@color/white"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginBottom="150dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:textSize="12pt"
-            android:fontFamily="Roboto"
-            android:text="Que es lockphone?"/>
-        <TextView
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginBottom="60dp">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="20dp"
-            android:gravity="center"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"/>
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <android.support.v4.view.ViewPager
+                android:id="@+id/launch_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="60dp"
+                android:layout_alignParentTop="true">
+            </android.support.v4.view.ViewPager>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:layout_alignParentBottom="true">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+                    <LinearLayout
+                        android:id="@+id/launch_pager_indicator1"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/pager_indicator_active"/>
+                    <LinearLayout
+                        android:id="@+id/launch_pager_indicator2"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/pager_indicator"/>
+                    <LinearLayout
+                        android:id="@+id/launch_pager_indicator3"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/pager_indicator"/>
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@color/black_transparent">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/logo_texto_vertical"/>
+        </LinearLayout>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/main_iniciar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
         android:background="@color/lp_red">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/white"
+            android:fontFamily="sans-serif-light"
             android:text="INICIAR"
             android:gravity="center"/>
     </LinearLayout>

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.widget.Button;
+import android.widget.LinearLayout;
 
 /**
  * Created by dcoellar on 9/23/15.
@@ -20,7 +20,7 @@ public class RegisterActivity extends FragmentActivity {
 
         final Activity activity = this;
 
-        Button continuar = (Button)findViewById(R.id.register);
+        LinearLayout continuar = (LinearLayout)findViewById(R.id.register);
         continuar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

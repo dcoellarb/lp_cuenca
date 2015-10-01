@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/launch_title"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:textSize="12pt"
+        android:fontFamily="sans-serif-light"
+        android:text="Que es lockphone?"/>
+    <TextView
+        android:id="@+id/launch_text"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_margin="20dp"
+        android:gravity="center|top"
+        android:fontFamily="sans-serif-light"
+        android:textSize="8pt"
+        android:text="Una applicacion para asegurar tu telefono contra perdida o robo, no importa la marco o el modelo"/>
+    <ImageView
+        android:id="@+id/launch_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</LinearLayout>

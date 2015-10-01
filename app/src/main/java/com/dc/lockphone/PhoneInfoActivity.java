@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -22,7 +22,7 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
 
         final Activity activity = this;
 
-        Button buy = (Button) findViewById(R.id.buy);
+        LinearLayout buy = (LinearLayout)findViewById(R.id.buy);
         buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

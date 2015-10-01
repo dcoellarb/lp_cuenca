@@ -1,21 +1,17 @@
 package com.dc.lockphone;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class LaunchActivity extends Activity {
+public class LaunchActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,94 +21,102 @@ public class LaunchActivity extends Activity {
 
         final Activity activity = this;
 
-        final ImageView imageView = (ImageView)findViewById(R.id.main_image_background);
-        final ImageView imageView2 = (ImageView)findViewById(R.id.main_image_background2);
+        ViewPager viewPager = (ViewPager)findViewById(R.id.launch_pager);
+        viewPager.setAdapter(new LaunchPagerAdapter(getSupportFragmentManager()));
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        final Handler handler = new Handler() {
+            }
 
-            private int counter = 0;
+            @Override
+            public void onPageSelected(int position) {
+                LinearLayout pager1 = (LinearLayout) findViewById(R.id.launch_pager_indicator1);
+                LinearLayout pager2 = (LinearLayout) findViewById(R.id.launch_pager_indicator2);
+                LinearLayout pager3 = (LinearLayout) findViewById(R.id.launch_pager_indicator3);
 
-            public void handleMessage(Message msg) {
-                int exit = 0;
-                int enter = 0;
-
-                switch (counter){
+                final int sdk = android.os.Build.VERSION.SDK_INT;
+                if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                    pager1.setBackgroundDrawable(getResources().getDrawable(R.drawable.pager_indicator));
+                    pager2.setBackgroundDrawable(getResources().getDrawable(R.drawable.pager_indicator));
+                    pager3.setBackgroundDrawable(getResources().getDrawable(R.drawable.pager_indicator));
+                } else {
+                    pager1.setBackground(getResources().getDrawable(R.drawable.pager_indicator));
+                    pager2.setBackground(getResources().getDrawable(R.drawable.pager_indicator));
+                    pager3.setBackground(getResources().getDrawable(R.drawable.pager_indicator));
+                }
+                switch (position) {
                     case 0:
-                        exit = R.drawable.tutorial2;
-                        enter = R.drawable.tutorial3;
-                        counter += 1;
+                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            pager1.setBackgroundDrawable(getResources().getDrawable(R.drawable.pager_indicator_active));
+                        } else {
+                            pager1.setBackground(getResources().getDrawable(R.drawable.pager_indicator_active));
+                        }
                         break;
                     case 1:
-                        exit = R.drawable.tutorial3;
-                        enter = R.drawable.tutorial4;
-                        counter += 1;
+                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            pager2.setBackgroundDrawable(getResources().getDrawable(R.drawable.pager_indicator_active));
+                        } else {
+                            pager2.setBackground(getResources().getDrawable(R.drawable.pager_indicator_active));
+                        }
                         break;
                     case 2:
-                        exit = R.drawable.tutorial4;
-                        enter = R.drawable.tutorial5;
-                        counter += 1;
-                        break;
-                    case 3:
-                        exit = R.drawable.tutorial5;
-                        enter = R.drawable.tutorial6;
-                        counter += 1;
-                        break;
-                    case 4:
-                        exit = R.drawable.tutorial6;
-                        enter = R.drawable.tutorial1;
-                        counter += 1;
-                        break;
-                    case 5:
-                        exit = R.drawable.tutorial1;
-                        enter = R.drawable.tutorial2;
-                        counter = 0;
+                        if (sdk < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                            pager3.setBackgroundDrawable(getResources().getDrawable(R.drawable.pager_indicator_active));
+                        } else {
+                            pager3.setBackground(getResources().getDrawable(R.drawable.pager_indicator_active));
+                        }
                         break;
                 }
-                ImageViewAnimatedChange(activity.getBaseContext(), imageView, imageView2, exit, enter);
             }
-        };
 
-        TimerTask timerTask = new TimerTask() {
             @Override
-            public void run() {
-                handler.obtainMessage().sendToTarget();
+            public void onPageScrollStateChanged(int state) {
+
             }
-        };
-        Timer timer = new Timer("backgroud_change",true);
-        timer.schedule(timerTask,5000,5000);
+        });
+
 
         LinearLayout iniciar = (LinearLayout)findViewById(R.id.main_iniciar);
         iniciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity,PhoneInfoActivity.class);
+                Intent intent = new Intent(activity, PhoneInfoActivity.class);
                 startActivity(intent);
             }
         });
 
     }
 
-    public void ImageViewAnimatedChange(Context c, final ImageView v, final ImageView v1, final int exit, final int enter) {
-        v1.setImageResource(exit);
-        final Animation anim_out = AnimationUtils.loadAnimation(c, R.anim.exit);
-        final Animation anim_in  = AnimationUtils.loadAnimation(c, R.anim.enter);
-        anim_out.setAnimationListener(new Animation.AnimationListener()
-        {
-            @Override public void onAnimationStart(Animation animation) {
-                anim_in.setAnimationListener(new Animation.AnimationListener() {
-                    @Override public void onAnimationStart(Animation animation) {}
-                    @Override public void onAnimationRepeat(Animation animation) {}
-                    @Override public void onAnimationEnd(Animation animation) {
-                        v1.setImageDrawable(null);
-                    }
-                });
-                v1.startAnimation(anim_in);
+    class LaunchPagerAdapter extends FragmentPagerAdapter{
+
+        public LaunchPagerAdapter(FragmentManager fm){
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            LaunchFragment fragment = null;
+            switch (position){
+                case 0:
+                    fragment = new LaunchFragment();
+                    fragment.setContent(getString(R.string.tutorial1_title),getString(R.string.tutorial1_text),R.drawable.tutorial1);
+                    break;
+                case 1:
+                    fragment = new LaunchFragment();
+                    fragment.setContent(getString(R.string.tutorial2_title),getString(R.string.tutorial2_text),R.drawable.tutorial1);
+                    break;
+                case 2:
+                    fragment = new LaunchFragment();
+                    fragment.setContent(getString(R.string.tutorial3_title),getString(R.string.tutorial3_text),R.drawable.tutorial1);
+                    break;
             }
-            @Override public void onAnimationRepeat(Animation animation) {}
-            @Override public void onAnimationEnd(Animation animation) {
-                v.setImageResource(exit);
-            }
-        });
-        v.startAnimation(anim_out);
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
     }
 }

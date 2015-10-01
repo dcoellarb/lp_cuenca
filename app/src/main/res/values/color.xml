@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="white">#ffffff</color>
+    <color name="white_transparent">#30ffffff</color>
     <color name="black">#000000</color>
+    <color name="black_transparent">#30000000</color>
     <color name="lp_red">#D52027</color>
     <color name="lp_grey">#2B2B2B</color>
+    <color name="lp_blue">#2B74B9</color>
+    <color name="payphone">#FF9000</color>
+    <color name="paypal">#0077C3</color>
+    <color name="datafast">#20B39E</color>
+    <color name="default_background">#fff3f3f3</color>
 </resources>
