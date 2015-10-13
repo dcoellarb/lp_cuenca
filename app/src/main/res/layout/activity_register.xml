@@ -75,7 +75,7 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Nombre Completo"/>
                     <EditText
-                        android:id="@+id/nombre_completo"
+                        android:id="@+id/register_fullname"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"/>
@@ -86,7 +86,7 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Direccion"/>
                     <EditText
-                        android:id="@+id/address"
+                        android:id="@+id/register_address"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif"
@@ -98,7 +98,7 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Telefono"/>
                     <EditText
-                        android:id="@+id/phone"
+                        android:id="@+id/register_phone"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif"
@@ -110,7 +110,7 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Ruc/CI"/>
                     <EditText
-                        android:id="@+id/ruc_ci"
+                        android:id="@+id/register_ruc_ci"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif"
@@ -122,10 +122,11 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Email"/>
                     <EditText
-                        android:id="@+id/email"
+                        android:id="@+id/register_email"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif"
+                        android:inputType="textEmailAddress"
                         android:layout_weight="1"/>
                     <TextView
                         android:layout_width="match_parent"
@@ -134,7 +135,7 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Contrasena"/>
                     <EditText
-                        android:id="@+id/password"
+                        android:id="@+id/register_password"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif"
@@ -147,7 +148,7 @@
                         android:fontFamily="sans-serif-light"
                         android:text="Confirmar Contrasena"/>
                     <EditText
-                        android:id="@+id/confirm_password"
+                        android:id="@+id/register_confirm_password"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:fontFamily="sans-serif"

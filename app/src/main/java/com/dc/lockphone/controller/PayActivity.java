@@ -1,7 +1,9 @@
-package com.dc.lockphone;
+package com.dc.lockphone.controller;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,19 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.dc.lockphone.R;
+import com.dc.lockphone.model.PhoneInfo;
+import com.dc.lockphone.model.UserInfo;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.parse.SignUpCallback;
 
 /**
  * Created by dcoellar on 9/23/15.
@@ -21,6 +35,13 @@ public class PayActivity extends Activity {
     private int selected = -1;
     private PayListAdapter adapter;
 
+    private PhoneInfo phoneInfo;
+    private UserInfo userInfo;
+
+    private LinearLayout progressBarContainer;
+    private ProgressBar progressBar;
+    private LinearLayout pay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +49,8 @@ public class PayActivity extends Activity {
         inflater = getLayoutInflater();
 
         setContentView(R.layout.activity_pay);
+
+        final Activity activity = this;
 
         ListView list = (ListView) findViewById(R.id.pay_list);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -39,6 +62,93 @@ public class PayActivity extends Activity {
         });
         adapter = new PayListAdapter();
         list.setAdapter(adapter);
+
+        progressBarContainer = (LinearLayout)findViewById(R.id.pay_progressbar_container);
+        progressBar = (ProgressBar)findViewById(R.id.pay_progressbar);
+        progressBar.getIndeterminateDrawable().setColorFilter(
+                getResources().getColor(R.color.lp_red),
+                android.graphics.PorterDuff.Mode.SRC_IN);
+        progressBar.setVisibility(View.VISIBLE);
+
+        pay = (LinearLayout) findViewById(R.id.pay);
+        /*
+        pay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                pay.setEnabled(false);
+                progressBarContainer.setVisibility(View.VISIBLE);
+
+                //TODO - call pay service
+
+                phoneInfo = ((LockphoneApplication) activity.getApplication()).getPhoneInfo();
+                userInfo = phoneInfo.getUserInfo();
+                getDevice();
+            }
+        });
+        */
+    }
+
+    private void signupUser(){
+        final ParseUser user = ParseUser.getCurrentUser();
+        user.setUsername(userInfo.getEmail());
+        user.setEmail(userInfo.getEmail());
+        user.setPassword(userInfo.getPassword());
+        user.signUpInBackground(new SignUpCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+
+                    pay.setEnabled(true);
+                    progressBarContainer.setVisibility(View.GONE);
+
+                    //TODO - Show congratulations messages
+
+                    Intent i = new Intent(getBaseContext(), HomeRegisteredActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(i);
+                } else {
+                    Log.e("ERROR", "signupUser:" + e.getMessage());
+                    //TODO - inform user of issues with parse
+                }
+            }
+        });
+    }
+
+    private void getDevice() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Devices");
+        query.whereEqualTo("imei", phoneInfo.getImei());
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null && object != null) {
+                    addDeviceInsurance(object);
+                } else {
+                    Log.e("ERROR", "getDevice:" + e.getMessage());
+                    //TODO - inform user of issues with parse
+                }
+            }
+        });
+    }
+
+    private void addDeviceInsurance(ParseObject device){
+        //TODO - add device insurance information
+        ParseObject deviceInsurance = ParseObject.create("DeviceInsurance");
+        deviceInsurance.put("device",device);
+        deviceInsurance.put("price",phoneInfo.getInsuranceMontlyCost());
+        deviceInsurance.put("deductible",phoneInfo.getDeductible());
+        deviceInsurance.put("insurance",phoneInfo.getInsuranceValue());
+        deviceInsurance.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    signupUser();
+                } else {
+                    Log.e("ERROR", "addDeviceInsurance:" + e.getMessage());
+                    //TODO - inform user of issues with parse
+                }
+            }
+        });
     }
 
     @Override

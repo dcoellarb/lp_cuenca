@@ -1,4 +1,4 @@
-package com.dc.lockphone;
+package com.dc.lockphone.model;
 
 /**
  * Created by dcoellar on 9/23/15.

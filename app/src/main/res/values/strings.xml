@@ -8,9 +8,9 @@
     <string name="brand">Marca</string>
     <string name="model">Modelo</string>
     <string name="imei">IMEI</string>
-    <string name="insured_value">Valor Asegurado</string>
+    <string name="insured_value">Valor del Equipo</string>
     <string name="montly_cost">Costo Mensual</string>
-    <string name="deductible">Deducible</string>
+    <string name="deductible">Deducible - Depreciacion</string>
     <string name="imgUrl_pattern">img class=\"tel\" src=\"([^\"]+)</string>
     <string name="imei_empty_image_base_url">http://www.imei.info/</string>
     <string name="imei_site_base_url">http://www.imei.info</string>
@@ -24,4 +24,5 @@
     <string name="tutorial2_text">1.- Reconocemos tu teléfono \n 2.- Registras tu información básica \n 3.- Seleccionas tu forma de pago preferida</string>
     <string name="tutorial3_title">Información privada</string>
     <string name="tutorial3_text">Unicamente registramos la marca, el modelo y el IMEI de tu teléfono para asegurarlo</string>
+    <string name="recieved_value">Valor a recibir</string>
 </resources>

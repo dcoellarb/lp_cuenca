@@ -1,4 +1,4 @@
-package com.dc.lockphone;
+package com.dc.lockphone.controller;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,12 +8,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.dc.lockphone.model.IGetPhoneInfoListener;
+import com.dc.lockphone.LockphoneApplication;
+import com.dc.lockphone.R;
+import com.dc.lockphone.model.PhoneInfo;
 import com.squareup.picasso.Picasso;
 
 /**
  * Created by dcoellar on 9/23/15.
  */
 public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener {
+
+    TextView txtBrand;
+    TextView txtModel;
+    TextView txtIMEI;
+    ImageView img;
+    TextView txtInsuredValue;
+    TextView txtDeductible;
+    TextView txtValue;
+    TextView txtMontlyCost;
+    LinearLayout buy;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +37,15 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
 
         final Activity activity = this;
 
-        LinearLayout buy = (LinearLayout)findViewById(R.id.buy);
+        this.txtBrand = (TextView)findViewById(R.id.brand);
+        this.txtModel = (TextView)findViewById(R.id.model);
+        this.txtIMEI = (TextView)findViewById(R.id.imei);
+        this.img = (ImageView)findViewById(R.id.img);
+        this.txtInsuredValue = (TextView)findViewById(R.id.insured_value);
+        this.txtDeductible = (TextView)findViewById(R.id.deductible);
+        this.txtValue = (TextView)findViewById(R.id.recieved_value);
+        this.txtMontlyCost = (TextView)findViewById(R.id.montly_cost);
+        this.buy = (LinearLayout)findViewById(R.id.buy);
         buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -32,7 +55,14 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
             }
         });
 
-        if (((LockphoneApplication) getApplication()).getPhoneInfo() != null){
+        if (((LockphoneApplication) getApplication()).getPhoneInfo() != null
+                && ((LockphoneApplication) getApplication()).getPhoneInfo().getImei() != null
+                && ((LockphoneApplication) getApplication()).getPhoneInfo().getImei().length() > 0
+                && ((LockphoneApplication) getApplication()).getPhoneInfo().getBrand() != null
+                && ((LockphoneApplication) getApplication()).getPhoneInfo().getBrand().length() > 0
+                && ((LockphoneApplication) getApplication()).getPhoneInfo().getModel() != null
+                && ((LockphoneApplication) getApplication()).getPhoneInfo().getModel().length() > 0
+                ){
             updateData();
         }else{
             ((LockphoneApplication) getApplication()).getListeners().add(this);
@@ -61,23 +91,17 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
     private void updateData(){
         PhoneInfo phoneInfo = ((LockphoneApplication) getApplication()).getPhoneInfo();
 
-        TextView txtBrand = (TextView)findViewById(R.id.brand);
-        txtBrand.setText(phoneInfo.getBrand());
-        TextView txtModel = (TextView)findViewById(R.id.model);
-        txtModel.setText(phoneInfo.getModel());
-        TextView txtIMEI = (TextView)findViewById(R.id.imei);
-        txtIMEI.setText(phoneInfo.getImei());
+        this.txtBrand.setText(phoneInfo.getBrand());
+        this.txtModel.setText(phoneInfo.getModel());
+        this.txtIMEI.setText(phoneInfo.getImei());
 
-        ImageView img = (ImageView)findViewById(R.id.img);
         Picasso.with(this.getBaseContext())
                 .load(phoneInfo.getImageUrl())
                 .into(img);
 
-        TextView txtInsuredValue = (TextView)findViewById(R.id.insured_value);
-        txtInsuredValue.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceValue()));
-        TextView txtMontlyCost = (TextView)findViewById(R.id.montly_cost);
-        txtMontlyCost.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceMontlyCost()));
-        TextView txtDeductible = (TextView)findViewById(R.id.deductible);
-        txtDeductible.setText("$ " + String.format("%.2f", phoneInfo.getDeductible()));
+        this.txtInsuredValue.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceValue()));
+        this.txtDeductible.setText("$ " + String.format("%.2f", phoneInfo.getDeductible() + phoneInfo.getDepreciation()));
+        this.txtValue.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceValue() - (phoneInfo.getDeductible() + phoneInfo.getDepreciation())));
+        this.txtMontlyCost.setText("$ " + String.format("%.2f", phoneInfo.getInsuranceMontlyCost()));
     }
 }

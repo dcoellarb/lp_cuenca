@@ -1,4 +1,4 @@
-package com.dc.lockphone;
+package com.dc.lockphone.controller;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,10 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import com.dc.lockphone.R;
+import com.parse.ParseAnonymousUtils;
+import com.parse.ParseUser;
 
 /**
  * Created by dcoellar on 9/29/15.
@@ -42,8 +46,15 @@ public class SplashActivity extends Activity{
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent i = new Intent(getBaseContext(), LaunchActivity.class);
-                        startActivity(i);
+                        ParseUser parseUser = ParseUser.getCurrentUser();
+                        if (!ParseAnonymousUtils.isLinked(parseUser)){
+                            String email = parseUser.getUsername();
+                            Intent i = new Intent(getBaseContext(), HomeRegisteredActivity.class);
+                            startActivity(i);
+                        }else{
+                            Intent i = new Intent(getBaseContext(), LaunchActivity.class);
+                            startActivity(i);
+                        }
                     }
                 }, 500);
             }

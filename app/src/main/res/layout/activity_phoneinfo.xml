@@ -136,7 +136,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:fontFamily="sans-serif-light"
-                            android:textSize="7pt"
+                            android:textSize="6pt"
                             android:layout_weight="1"
                             android:text="@string/insured_value"
                             android:gravity="center_vertical"/>
@@ -160,32 +160,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:fontFamily="sans-serif-light"
-                            android:textSize="7pt"
-                            android:layout_weight="1"
-                            android:text="@string/montly_cost"
-                            android:gravity="center_vertical"/>
-                        <TextView
-                            android:id="@+id/montly_cost"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="10pt"
-                            android:fontFamily="sans-serif"
-                            android:layout_weight="1"
-                            android:text="$ 5.00"
-                            android:gravity="center_vertical"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="35dp"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textSize="7pt"
+                            android:textSize="6pt"
                             android:layout_weight="1"
                             android:fontFamily="sans-serif-light"
                             android:text="@string/deductible"
@@ -198,6 +173,56 @@
                             android:fontFamily="sans-serif"
                             android:layout_weight="1"
                             android:text="$ 150.00"
+                            android:gravity="center_vertical"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="6pt"
+                            android:layout_weight="1"
+                            android:fontFamily="sans-serif-light"
+                            android:text="@string/recieved_value"
+                            android:gravity="center_vertical"/>
+                        <TextView
+                            android:id="@+id/recieved_value"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="10pt"
+                            android:fontFamily="sans-serif"
+                            android:layout_weight="1"
+                            android:text="$ 150.00"
+                            android:gravity="center_vertical"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_weight="1"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:fontFamily="sans-serif-light"
+                            android:textSize="6pt"
+                            android:layout_weight="1"
+                            android:text="@string/montly_cost"
+                            android:gravity="center_vertical"/>
+                        <TextView
+                            android:id="@+id/montly_cost"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="10pt"
+                            android:fontFamily="sans-serif"
+                            android:layout_weight="1"
+                            android:text="$ 5.00"
                             android:gravity="center_vertical"/>
                     </LinearLayout>
                 </LinearLayout>

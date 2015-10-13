@@ -1,4 +1,4 @@
-package com.dc.lockphone;
+package com.dc.lockphone.model;
 
 /**
  * Created by dcoellar on 9/23/15.
@@ -13,8 +13,10 @@ public class PhoneInfo {
     private String imageUrl;
     private Double insuranceValue;
     private Double insuranceMontlyCost;
+    private Double depreciation;
     private Double deductible;
     private String error;
+    private UserInfo userInfo;
 
     public PhoneInfo(){
     }
@@ -97,5 +99,21 @@ public class PhoneInfo {
 
     public void setDeductible(Double deductible) {
         this.deductible = deductible;
+    }
+
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public Double getDepreciation() {
+        return depreciation;
+    }
+
+    public void setDepreciation(Double depreciation) {
+        this.depreciation = depreciation;
     }
 }

@@ -1,4 +1,4 @@
-package com.dc.lockphone;
+package com.dc.lockphone.controller;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.dc.lockphone.R;
 
 public class LaunchActivity extends FragmentActivity {
 

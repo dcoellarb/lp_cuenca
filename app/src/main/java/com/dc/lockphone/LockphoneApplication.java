@@ -6,6 +6,10 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+import com.dc.lockphone.model.IGetPhoneInfoListener;
+import com.dc.lockphone.model.PhoneInfo;
+import com.dc.lockphone.utils.LenientConverter;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.parse.GetCallback;
@@ -17,6 +21,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -45,14 +50,15 @@ public class LockphoneApplication extends Application {
     @Override
     public void onCreate(){
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
 
         // Enable Local Datastore.
         Parse.enableLocalDatastore(this);
 
         Parse.initialize(this, "NAJHp52meLFwdQp8K3ONLzciWvZhwCgW4UIY83Yf", "KgnW5QSyszCL7sc3QFnpLbEiXmIM2suI7epIpwCh");
-
         ParseUser.enableAutomaticUser();
         ParseACL defaultACL = new ParseACL();
+        defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
 
         if(this.phoneInfo == null){
@@ -91,7 +97,7 @@ public class LockphoneApplication extends Application {
     private void getImeiFromParse(final String imei){
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Devices");
-        query.whereEqualTo("imei", phoneInfo.getImei());
+        query.whereEqualTo("imei", imei.trim());
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
@@ -109,12 +115,13 @@ public class LockphoneApplication extends Application {
                         int year = brand.getInt("year");
 
                         Double insurance = brand.getDouble("insurance");
-                        Double depreciation = brand.getDouble("depreciation");
-                        Double insuranceValue = insurance - ((todayYear - year) * (insurance * (depreciation/100)));
+                        Double depreciation = ((brand.getDouble("depreciation")/100) * insurance) * (todayYear - year);
+                        Double deductible = brand.getDouble("deductible");
 
-                        phoneInfo.setInsuranceValue(insuranceValue);
+                        phoneInfo.setInsuranceValue(insurance);
+                        phoneInfo.setDepreciation(depreciation);
+                        phoneInfo.setDeductible(deductible);
                         phoneInfo.setInsuranceMontlyCost(brand.getDouble("price"));
-                        phoneInfo.setDeductible(brand.getDouble("deductible"));
 
                         callListeners();
 
@@ -122,10 +129,14 @@ public class LockphoneApplication extends Application {
                         ex.printStackTrace();
                     }
                 } else {
-                    ParseObject parseDevice = new ParseObject("Devices");
-                    parseDevice.put("imei", imei);
+                    if (e.getCode() == 101) {
+                        ParseObject parseDevice = new ParseObject("Devices");
+                        parseDevice.put("imei", imei);
 
-                    getBrandFromParse(imei);
+                        getBrandFromParse(imei);
+                    }else{
+                        //TODO - issue with parse let the user know
+                    }
                 }
             }
         });
@@ -163,6 +174,7 @@ public class LockphoneApplication extends Application {
                     final ParseObject parseDevice = new ParseObject("Devices");
                     parseDevice.put("imei", imei);
                     parseDevice.put("brand", object);
+                    parseDevice.put("user",ParseUser.getCurrentUser());
                     parseDevice.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
@@ -225,8 +237,6 @@ public class LockphoneApplication extends Application {
                                             }
                                             phoneInfo.setImageUrl(imgUrl);
 
-                                            callListeners();
-
                                             final ParseObject brand = new ParseObject("Brands");
                                             brand.put("brand",phoneInfo.getBrand());
                                             brand.put("model",phoneInfo.getModel());
@@ -240,16 +250,28 @@ public class LockphoneApplication extends Application {
                                                         ParseObject parseDevice = new ParseObject("Devices");
                                                         parseDevice.put("imei", imei);
                                                         parseDevice.put("brand", brand);
-                                                        parseDevice.saveInBackground();
+                                                        parseDevice.put("user", ParseUser.getCurrentUser());
+                                                        parseDevice.saveInBackground(new SaveCallback() {
+                                                            @Override
+                                                            public void done(ParseException e) {
+                                                                if (e != null){
+                                                                    Log.e("ERROR", e.getMessage());
+                                                                    phoneInfo.setError("Error saving device to parse");
+                                                                    callListeners();
+                                                                }
+                                                                callListeners();
+                                                            }
+                                                        });
+
                                                     } else {
-                                                        Log.d("ERROR", "parse brnad save fail:" + e.getMessage());
+                                                        Log.e("ERROR", e.getMessage());
+                                                        phoneInfo.setError("Error saving brand to parse");
+                                                        callListeners();
                                                     }
 
                                                 }
                                             });
                                         }
-
-
                                     } catch (Exception e) {
                                         Log.e("ERROR", e.getMessage());
                                         Log.e("ERROR", e.getStackTrace().toString());

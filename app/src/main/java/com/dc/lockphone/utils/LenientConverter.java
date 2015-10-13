@@ -1,4 +1,4 @@
-package com.dc.lockphone;
+package com.dc.lockphone.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
