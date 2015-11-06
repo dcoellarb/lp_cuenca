@@ -15,7 +15,9 @@
         <activity
             android:name=".controller.SplashActivity"
             android:label="@string/app_name"
-            android:noHistory="true">
+            android:noHistory="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,20 +26,57 @@
         </activity>
         <activity
             android:name=".controller.LaunchActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".controller.PhoneInfoActivity">
+            android:name=".controller.PhoneInfoActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".controller.RegisterActivity">
+            android:name=".controller.RegisterActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".controller.PayActivity">
+            android:name=".controller.PayActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".controller.HomeRegisteredActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".controller.ContratoActivity"
+            android:label="Contrato"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.HomeRegisteredActivity" />
+        </activity>
+        <activity
+            android:name=".controller.AseguradoraActivity"
+            android:label="Aseguradora"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.HomeRegisteredActivity" />
+        </activity>
+        <activity
+            android:name=".controller.ReclamoActivity"
+            android:label="Reclamos"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.HomeRegisteredActivity" />
         </activity>
         <meta-data
             android:name="io.fabric.ApiKey"

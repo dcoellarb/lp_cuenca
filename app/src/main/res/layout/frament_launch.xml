@@ -1,27 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
-        android:id="@+id/launch_title"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:gravity="center"
-        android:textSize="12pt"
-        android:fontFamily="sans-serif-light"
-        android:text="Que es lockphone?"/>
-    <TextView
-        android:id="@+id/launch_text"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_margin="20dp"
-        android:gravity="center|top"
-        android:fontFamily="sans-serif-light"
-        android:textSize="8pt"
-        android:text="Una applicacion para asegurar tu telefono contra perdida o robo, no importa la marco o el modelo"/>
     <ImageView
         android:id="@+id/launch_image"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/black_transparent_low">
+        <LinearLayout
+            android:layout_margin="20dp"
+            android:layout_width="fill_parent"
+            android:orientation="vertical"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/launch_title"
+                android:layout_marginTop="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Que es lockphone?"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/white"
+                android:textSize="14pt"/>
+            <TextView
+                android:id="@+id/launch_text"
+                android:layout_marginTop="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Una applicacion para asegurar tu telefono contra perdida o robo, no importa la marco o el modelo"
+                android:fontFamily="sans-serif-light"
+                android:textColor="@color/white"
+                android:textSize="8pt"/>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

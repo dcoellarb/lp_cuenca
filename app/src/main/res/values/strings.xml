@@ -21,7 +21,7 @@
     <string name="tutorial1_title">Que es Lockphone?</string>
     <string name="tutorial1_text">Una applicacion para asegurar tu teléfono contra pérdida o robo, no importa la marca o el modelo</string>
     <string name="tutorial2_title">Como Funciona?</string>
-    <string name="tutorial2_text">1.- Reconocemos tu teléfono \n 2.- Registras tu información básica \n 3.- Seleccionas tu forma de pago preferida</string>
+    <string name="tutorial2_text">1.- Reconocemos tu teléfono \n2.- Registras tu información básica \n3.- Seleccionas tu forma de pago preferida</string>
     <string name="tutorial3_title">Información privada</string>
     <string name="tutorial3_text">Unicamente registramos la marca, el modelo y el IMEI de tu teléfono para asegurarlo</string>
     <string name="recieved_value">Valor a recibir</string>

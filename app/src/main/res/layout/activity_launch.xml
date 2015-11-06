@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_marginBottom="60dp">
+        android:layout_marginBottom="0dp">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -20,8 +20,8 @@
                 android:id="@+id/launch_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="60dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
                 android:layout_alignParentTop="true">
             </android.support.v4.view.ViewPager>
             <LinearLayout
@@ -29,6 +29,7 @@
                 android:layout_height="60dp"
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
+                android:layout_marginBottom="60dp"
                 android:layout_alignParentBottom="true">
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -61,6 +62,7 @@
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
+        <!--
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -71,6 +73,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/logo_texto_vertical"/>
         </LinearLayout>
+        -->
     </LinearLayout>
     <LinearLayout
         android:id="@+id/main_iniciar"
@@ -78,7 +81,8 @@
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/lp_red">
+        android:background="@color/lp_red"
+        android:visibility="gone">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

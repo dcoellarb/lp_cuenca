@@ -15,7 +15,7 @@ public class PhoneInfo {
     private Double insuranceMontlyCost;
     private Double depreciation;
     private Double deductible;
-    private String error;
+    private PhoneInfoError error;
     private UserInfo userInfo;
 
     public PhoneInfo(){
@@ -69,11 +69,11 @@ public class PhoneInfo {
         this.imageUrl = imageUrl;
     }
 
-    public String getError() {
+    public PhoneInfoError getError() {
         return error;
     }
 
-    public void setError(String error) {
+    public void setError(PhoneInfoError error) {
         this.error = error;
     }
 

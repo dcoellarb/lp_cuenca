@@ -68,6 +68,8 @@ public class LaunchActivity extends FragmentActivity {
                         } else {
                             pager3.setBackground(getResources().getDrawable(R.drawable.pager_indicator_active));
                         }
+                        LinearLayout iniciar = (LinearLayout) findViewById(R.id.main_iniciar);
+                        iniciar.setVisibility(View.VISIBLE);
                         break;
                 }
             }
@@ -98,19 +100,16 @@ public class LaunchActivity extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            LaunchFragment fragment = null;
+            LaunchFragment fragment = new LaunchFragment();
             switch (position){
                 case 0:
-                    fragment = new LaunchFragment();
-                    fragment.setContent(getString(R.string.tutorial1_title),getString(R.string.tutorial1_text),R.drawable.tutorial1);
+                    fragment.setContent(getString(R.string.tutorial1_title),getString(R.string.tutorial1_text),R.drawable.slide1_1);
                     break;
                 case 1:
-                    fragment = new LaunchFragment();
-                    fragment.setContent(getString(R.string.tutorial2_title),getString(R.string.tutorial2_text),R.drawable.tutorial1);
+                    fragment.setContent(getString(R.string.tutorial2_title),getString(R.string.tutorial2_text),R.drawable.slide2_1);
                     break;
                 case 2:
-                    fragment = new LaunchFragment();
-                    fragment.setContent(getString(R.string.tutorial3_title),getString(R.string.tutorial3_text),R.drawable.tutorial1);
+                    fragment.setContent(getString(R.string.tutorial3_title),getString(R.string.tutorial3_text),R.drawable.slide3);
                     break;
             }
             return fragment;

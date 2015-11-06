@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.dc.lockphone.R;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseUser;
 
 /**
@@ -47,7 +46,9 @@ public class SplashActivity extends Activity{
                     @Override
                     public void run() {
                         ParseUser parseUser = ParseUser.getCurrentUser();
-                        if (!ParseAnonymousUtils.isLinked(parseUser)){
+                        if (parseUser.getUsername() != null
+                                && android.util.Patterns.EMAIL_ADDRESS.matcher(parseUser.getUsername()).matches()
+                                && parseUser.getEmail() != null ) {
                             String email = parseUser.getUsername();
                             Intent i = new Intent(getBaseContext(), HomeRegisteredActivity.class);
                             startActivity(i);

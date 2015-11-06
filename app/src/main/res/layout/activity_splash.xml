@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lp_grey"
+    android:background="@color/lp_red"
     android:id="@+id/splash_main">
     <RelativeLayout
     android:layout_width="match_parent"
@@ -19,7 +19,7 @@
         android:id="@+id/splash_lock_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lp_grey">
+        android:background="@color/lp_red">
         <LinearLayout
             android:layout_marginTop="150dp"
             android:layout_marginBottom="0dp"
@@ -33,12 +33,12 @@
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/logo">
+            android:background="@drawable/logo_white">
             <LinearLayout
                 android:id="@+id/splash_lock_spacer"
                 android:layout_width="30dp"
                 android:layout_height="80dp"
-                android:background="@color/lp_grey"
+                android:background="@color/lp_red"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:orientation="horizontal">
@@ -48,12 +48,12 @@
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_centerInParent="true"
-                android:background="@drawable/logo_inner">
+                android:background="@drawable/logo_inner_white">
                 <LinearLayout
                     android:id="@+id/splash_inner_lock_spacer"
                     android:layout_width="20dp"
                     android:layout_height="40dp"
-                    android:background="@color/lp_grey"
+                    android:background="@color/lp_red"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true"
                     android:orientation="horizontal">

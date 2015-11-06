@@ -4,60 +4,63 @@
     android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:orientation="vertical"
         android:gravity="center">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <LinearLayout
-                android:id="@+id/launch_pager_indicator1"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_margin="10dp"
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                android:text="1"
+                android:fontFamily="sans-serif"
+                android:textSize="20pt"
+                android:textColor="@color/white"
+                android:gravity="center|center"
                 android:background="@drawable/pager_indicator_active"/>
             <LinearLayout
-                android:id="@+id/launch_pager_indicator2"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:orientation="horizontal"
-                android:background="@drawable/pager_indicator"/>
-            <LinearLayout
-                android:id="@+id/launch_pager_indicator3"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:orientation="horizontal"
-                android:background="@drawable/pager_indicator"/>
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:textSize="10pt"
+                    android:fontFamily="sans-serif"
+                    android:text="Informacion del dispositivo"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:lines="3"
+                    android:fontFamily="sans-serif-light"
+                    android:text="Para asegurar tu telefono necesitamos obtener su marca, modelo y numero de IMEI"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="5dip"
+        android:background="@drawable/shadow"
+        android:layout_marginTop="100dp">
+    </View>
     <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="60dp"
-        android:layout_marginBottom="120dp">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textSize="12pt"
-            android:fontFamily="sans-serif-light"
-            android:textColor="@color/black"
-            android:text="@string/phone_info_header"
-            android:gravity="center"/>
+        android:layout_marginTop="100dp">
         <LinearLayout
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
             <LinearLayout
+                android:id="@+id/phone_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -117,8 +120,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:orientation="vertical">
                 <LinearLayout
+                    android:id="@+id/phone_info_valores"
                     android:layout_width="match_parent"
                     android:layout_height="105dp"
                     android:orientation="vertical"
@@ -229,17 +234,6 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:text="@string/insured"
-        android:layout_marginBottom="60dp"
-        android:layout_marginRight="10dp"
-        android:fontFamily="sans-serif-light"
-        android:textColor="@color/lp_red"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"/>
     <LinearLayout
         android:id="@+id/buy"
         android:layout_width="match_parent"
@@ -253,6 +247,119 @@
             android:textColor="@color/white"
             android:gravity="center"
             android:fontFamily="sans-serif-light"
-            android:text="CONTINUAR" />
+            android:text="CONTINUAR"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/continue_disable"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="center|center"
+        android:background="@color/lp_grey"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="5dp"
+            android:layout_gravity="center|center"
+            android:src="@drawable/ic_signal_wifi_off_white_48dp"/>
+        <RelativeLayout
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textColor="@color/white"
+                android:textSize="6pt"
+                android:gravity="center_vertical"
+                android:fontFamily="sans-serif-light"
+                android:text="No hay conexion a Internet"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_alignParentBottom="true"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:textSize="5pt"
+                android:fontFamily="sans-serif-light"
+                android:text="Por favor intente mas tarde"/>
+            <Button
+                android:id="@+id/continue_disable_try_again"
+                android:layout_marginRight="5dp"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:background="@drawable/button_white_border"
+                android:text="Reintentar"
+                android:textColor="@color/white"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/black_transparent_low">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="@color/lp_grey"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+            <TextView
+                android:id="@+id/error_title"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-light"
+                android:textSize="12pt"
+                android:text="Lo sentimos!!!"
+                android:gravity="center|center"/>
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-light"
+                android:textSize="7pt"
+                android:text="Some text"
+                android:lines="2"
+                android:gravity="center|center"/>
+            <TextView
+                android:id="@+id/error_contact_message"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-light"
+                android:textSize="8pt"
+                android:text="Para asegurar tu telefono comunicate a info@lockphone.net"
+                android:lines="3"
+                android:gravity="center|center"
+                android:visibility="visible"/>
+            <Button
+                android:id="@+id/error_try_again"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Intentar de nuevo"
+                android:textColor="@color/white"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/button_white_border"
+                android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/error_progress_bar"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
