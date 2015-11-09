@@ -2,6 +2,7 @@ package com.dc.lockphone.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -22,6 +23,11 @@ import com.dc.lockphone.R;
 import com.dc.lockphone.model.PhoneInfo;
 import com.dc.lockphone.model.UserInfo;
 import com.dc.lockphone.utils.NetworkUtils;
+import com.lockphone.lockphone.Constants;
+import com.microtripit.mandrillapp.lutung.MandrillApi;
+import com.microtripit.mandrillapp.lutung.model.MandrillApiError;
+import com.microtripit.mandrillapp.lutung.view.MandrillMessage;
+import com.microtripit.mandrillapp.lutung.view.MandrillMessageStatus;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseACL;
@@ -31,6 +37,9 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by dcoellar on 9/23/15.
@@ -137,16 +146,9 @@ public class PayActivity extends Activity {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
-                                            pay.setEnabled(true);
-                                            progressBarContainer.setVisibility(View.GONE);
 
-                                            ((LockphoneApplication) activity.getApplication()).getPhoneInfoUtils().setPhoneInfo(null);
+                                            new SendEmailTask().execute("");
 
-                                            //TODO - Show congratulations messages
-
-                                            Intent i = new Intent(getBaseContext(), HomeRegisteredActivity.class);
-                                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(i);
                                         } else {
                                             Log.e("ERROR", "updating user:" + e.getMessage());
 
@@ -304,6 +306,52 @@ public class PayActivity extends Activity {
             }
 
             return view;
+        }
+    }
+
+    class SendEmailTask extends AsyncTask<String,Void,MandrillMessageStatus[]> {
+
+        @Override
+        protected MandrillMessageStatus[] doInBackground(String... params) {
+            MandrillApi mandrillApi = new MandrillApi(Constants.MANDRILL_API_KEY);
+            MandrillMessageStatus[] messageStatusReports = null;
+
+            try {
+                MandrillMessage message = new MandrillMessage();
+                ArrayList<MandrillMessage.Recipient> recipients = new ArrayList<MandrillMessage.Recipient>();
+                MandrillMessage.Recipient recipient = new MandrillMessage.Recipient();
+                recipient.setEmail(userInfo.getEmail());
+                recipient.setName(userInfo.getFullname());
+                recipients.add(recipient);
+                message.setTo(recipients);
+                messageStatusReports = mandrillApi.messages().sendTemplate(Constants.MANDRILL_WELCOME_TEMPLATE,null,message,false,null,null);
+
+            } catch (MandrillApiError mandrillApiError) {
+                Log.d("ERROR","error sending contract email");
+                Log.d("ERROR",mandrillApiError.getMessage());
+                mandrillApiError.printStackTrace();
+            } catch (IOException ex) {
+                Log.d("ERROR","error sending contract email");
+                Log.d("ERROR",ex.getMessage());
+                ex.printStackTrace();
+            } finally {
+                return messageStatusReports;
+            }
+        }
+
+        protected void onPostExecute(MandrillMessageStatus[] statuses) {
+            pay.setEnabled(true);
+            progressBarContainer.setVisibility(View.GONE);
+
+            ((LockphoneApplication) activity.getApplication()).getPhoneInfoUtils().setPhoneInfo(null);
+
+            Toast toast = Toast.makeText(activity.getBaseContext(), "Bienvenid@, su pago fue realizado con exito y su dispositivo ya esta asegurado.", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
+            toast.show();
+
+            Intent i = new Intent(getBaseContext(), HomeRegisteredActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
         }
     }
 }

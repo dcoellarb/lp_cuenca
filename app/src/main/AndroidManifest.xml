@@ -78,6 +78,30 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".controller.HomeRegisteredActivity" />
         </activity>
+        <activity
+            android:name=".controller.ContactUsActivity"
+            android:label="Contactenos"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.HomeRegisteredActivity" />
+        </activity>
+        <activity
+            android:name=".controller.ProfileActivity"
+            android:label="Perfil"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".controller.HomeRegisteredActivity" />
+        </activity>
+        <activity
+            android:name=".controller.LoginActivity"
+            android:label="Login"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="41ad49d43471dd3e631b695825140071ff1aeb6c" />
