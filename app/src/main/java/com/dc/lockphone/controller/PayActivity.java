@@ -125,24 +125,91 @@ public class PayActivity extends Activity {
         getDevice();
     }
 
+    private void getDevice() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Devices");
+        query.whereEqualTo("imei", phoneInfo.getImei());
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null && object != null) {
+                    addDeviceInsurance(object);
+                } else {
+                    Log.e("ERROR", "getDevice:" + e.getMessage());
+
+                    Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
+                    toast.show();
+
+                    pay.setEnabled(true);
+                    progressBarContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    private void addDeviceInsurance(final ParseObject device){
+        //TODO - add logic to select an aseguradora
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aseguradora");
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null && object != null) {
+                    ParseObject deviceInsurance = ParseObject.create("DeviceInsurance");
+                    deviceInsurance.put("device", device);
+                    deviceInsurance.put("insurance", phoneInfo.getInsuranceValue());
+                    deviceInsurance.put("depreciation", phoneInfo.getDepreciation());
+                    deviceInsurance.put("deductible", phoneInfo.getDeductible());
+                    deviceInsurance.put("price", phoneInfo.getInsuranceMontlyCost());
+                    deviceInsurance.put("aseguradora", object);
+                    deviceInsurance.setACL(new ParseACL(ParseUser.getCurrentUser()));
+                    deviceInsurance.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                signupUser();
+                            } else {
+                                Log.e("ERROR", "addDeviceInsurance:" + e.getMessage());
+
+                                Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
+                                toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
+                                toast.show();
+
+                                pay.setEnabled(true);
+                                progressBarContainer.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                } else {
+                    Log.e("ERROR", e.getMessage());
+
+                    Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
+                    toast.show();
+
+                    pay.setEnabled(true);
+                    progressBarContainer.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
     private void signupUser(){
-        final ParseUser user = ParseUser.getCurrentUser();
-        user.setUsername(userInfo.getEmail());
-        user.setEmail(userInfo.getEmail());
-        user.setPassword(userInfo.getPassword());
-        user.signUpInBackground(new SignUpCallback() {
+        ParseUser.getCurrentUser().setUsername(userInfo.getEmail());
+        ParseUser.getCurrentUser().setEmail(userInfo.getEmail());
+        ParseUser.getCurrentUser().setPassword(userInfo.getPassword());
+        ParseUser.getCurrentUser().signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    user.logInInBackground(userInfo.getEmail(), userInfo.getPassword(), new LogInCallback() {
+                    ParseUser.getCurrentUser().logInInBackground(userInfo.getEmail(), userInfo.getPassword(), new LogInCallback() {
                         @Override
                         public void done(ParseUser user, ParseException e) {
                             if (e == null) {
-                                    user.put("nombre", userInfo.getFullname());
-                                    user.put("direccion", userInfo.getAddress());
-                                    user.put("telefono", userInfo.getPhone());
-                                    user.put("ci_ruc", userInfo.getRuc_ci());
-                                    user.saveInBackground(new SaveCallback() {
+                                ParseUser.getCurrentUser().put("nombre", userInfo.getFullname());
+                                ParseUser.getCurrentUser().put("direccion", userInfo.getAddress());
+                                ParseUser.getCurrentUser().put("telefono", userInfo.getPhone());
+                                ParseUser.getCurrentUser().put("ci_ruc", userInfo.getRuc_ci());
+                                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
@@ -188,58 +255,7 @@ public class PayActivity extends Activity {
         });
     }
 
-    private void getDevice() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Devices");
-        query.whereEqualTo("imei", phoneInfo.getImei());
-        query.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject object, ParseException e) {
-                if (e == null && object != null) {
-                    addDeviceInsurance(object);
-                } else {
-                    Log.e("ERROR", "getDevice:" + e.getMessage());
-                    //TODO - inform user of issues with parse
-                }
-            }
-        });
-    }
 
-    private void addDeviceInsurance(final ParseObject device){
-        //TODO - add logic to select an aseguradora
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aseguradora");
-        query.getFirstInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject object, ParseException e) {
-                if (e == null && object != null){
-                    ParseObject deviceInsurance = ParseObject.create("DeviceInsurance");
-                    deviceInsurance.put("device", device);
-                    deviceInsurance.put("insurance", phoneInfo.getInsuranceValue());
-                    deviceInsurance.put("depreciation", phoneInfo.getDepreciation());
-                    deviceInsurance.put("deductible", phoneInfo.getDeductible());
-                    deviceInsurance.put("price", phoneInfo.getInsuranceMontlyCost());
-                    deviceInsurance.put("aseguradora", object);
-                    deviceInsurance.setACL(new ParseACL(ParseUser.getCurrentUser()));
-                    deviceInsurance.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                signupUser();
-                            } else {
-                                Log.e("ERROR", "addDeviceInsurance:" + e.getMessage());
-                                //TODO - inform user of issues with parse
-                            }
-                        }
-                    });
-                }else{
-                    Log.e("ERROR","could not get aseguradora for device");
-                    if (e == null){
-                        Log.e("ERROR", e.getMessage());
-                    }
-                    //TODO - inform user of issues with parse
-                }
-            }
-        });
-    }
 
     @Override
     public void onBackPressed() {
