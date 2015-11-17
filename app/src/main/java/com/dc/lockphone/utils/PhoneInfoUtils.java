@@ -184,6 +184,7 @@ public class PhoneInfoUtils {
 
             callListeners();
         }else{
+            //TODO - calculate device insurance
             phoneInfo.setError(PhoneInfoError.NO_BRAND_INSURANCE_DATA);
         }
     }
@@ -252,6 +253,7 @@ public class PhoneInfoUtils {
                                                                     Log.e("ERROR", e.getMessage());
                                                                     phoneInfo.setError(PhoneInfoError.ERROR_SAVING_PARSE);
                                                                 }else{
+                                                                    //TODO - calculate device insurance
                                                                     phoneInfo.setError(PhoneInfoError.NO_BRAND_INSURANCE_DATA);
                                                                 }
                                                                 callListeners();

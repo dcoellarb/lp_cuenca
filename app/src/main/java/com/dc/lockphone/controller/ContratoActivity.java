@@ -31,14 +31,14 @@ public class ContratoActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         id = b.getString("id");
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aseguradora");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("DeviceInsurance");
         query.whereEqualTo("objectId", id);
         query.getFirstInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
                 if (e == null && object != null) {
 
-                    String LinkTo = object.getParseFile("Contrato").getUrl();
+                    String LinkTo = object.getParseFile("contrato").getUrl();
 
                     WebView webView = (WebView) findViewById(R.id.contrato_webview);
                     webView.getSettings().setJavaScriptEnabled(true);

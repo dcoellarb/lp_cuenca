@@ -43,7 +43,7 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
                 android.graphics.PorterDuff.Mode.SRC_IN);
 
         phoneInfoUtils = ((LockphoneApplication) getApplication()).getPhoneInfoUtils();
-        if (phoneInfoUtils.getIsWorking()){
+        if (phoneInfoUtils.getIsWorking()) {
             phoneInfoUtils.addListener(this);
         }else{
             getPhoneInfoCallback();
@@ -126,7 +126,7 @@ public class PhoneInfoActivity extends Activity implements IGetPhoneInfoListener
     private void updateData() {
         ((TextView)findViewById(R.id.brand)).setText(phoneInfo.getBrand());
         ((TextView)findViewById(R.id.model)).setText(phoneInfo.getModel());
-        ((TextView)findViewById(R.id.imei)).setText(phoneInfo.getImei());
+        ((TextView) findViewById(R.id.imei)).setText(phoneInfo.getImei());
 
         Picasso.with(this.getBaseContext())
                 .load(phoneInfo.getImageUrl())

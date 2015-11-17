@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dc.lockphone.R;
+import com.dc.lockphone.model.NoDeviceException;
 import com.lockphone.lockphone.Constants;
 import com.parse.DeleteCallback;
 import com.parse.GetCallback;
@@ -48,7 +49,7 @@ public class HomeRegisteredActivity extends AppCompatActivity {
     private int[] layersImages;
     private Activity activity;
     private ParseObject parseDevice;
-    private String aseguradoraId;
+    private String deviceInsuranceId;
     private ParseUser user;
 
     @Override
@@ -90,6 +91,8 @@ public class HomeRegisteredActivity extends AppCompatActivity {
                         @Override
                         public void done(ParseObject object, ParseException e) {
                             if (e == null && object != null) {
+                                deviceInsuranceId = object.getObjectId();
+
                                 TextView txtInsuredValue = (TextView) findViewById(R.id.insured_value);
                                 TextView txtDeductible = (TextView) findViewById(R.id.deductible);
                                 TextView txtValue = (TextView) findViewById(R.id.recieved_value);
@@ -99,24 +102,22 @@ public class HomeRegisteredActivity extends AppCompatActivity {
                                 txtDeductible.setText("$ " + String.format("%.2f", object.getDouble("depreciation") + object.getDouble("deductible")));
                                 txtValue.setText("$ " + String.format("%.2f", object.getDouble("insurance") - (object.getDouble("depreciation") + object.getDouble("deductible"))));
                                 txtMontlyCost.setText("$ " + String.format("%.2f", object.getDouble("price")));
-
-                                aseguradoraId = object.getParseObject("aseguradora").getObjectId();
                             } else {
                                 Log.e("ERROR", "could not get device");
-                                if (e == null) {
+                                if (e != null) {
                                     Log.e("ERROR", e.getMessage());
                                 }
-                                //TODO - inform user of issues with parse
+                                throw new NoDeviceException("no device for user:" + ParseUser.getCurrentUser().getObjectId());
                             }
                         }
                     });
 
                 } else {
                     Log.e("ERROR", "could not get device");
-                    if (e == null) {
+                    if (e != null) {
                         Log.e("ERROR", e.getMessage());
                     }
-                    //TODO - inform user of issues with parse
+                    throw new NoDeviceException("no device for user:" + ParseUser.getCurrentUser().getObjectId());
                 }
             }
         });
@@ -164,13 +165,13 @@ public class HomeRegisteredActivity extends AppCompatActivity {
                 switch (pos) {
                     case 0:
                         Intent intent = new Intent(activity, ContratoActivity.class);
-                        intent.putExtra("id", aseguradoraId);
+                        intent.putExtra("id", deviceInsuranceId);
                         startActivity(intent);
                         break;
                     case 1:
-                        Intent intentAseguradora = new Intent(activity, AseguradoraActivity.class);
-                        intentAseguradora.putExtra("id", aseguradoraId);
-                        startActivity(intentAseguradora);
+                        //Intent intentAseguradora = new Intent(activity, AseguradoraActivity.class);
+                        //intentAseguradora.putExtra("id", aseguradoraId);
+                        //startActivity(intentAseguradora);
                         break;
                     case 2:
                         Intent intentReclamo = new Intent(activity, ReclamoActivity.class);

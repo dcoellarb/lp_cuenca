@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,11 +19,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.dc.lockphone.LockphoneApplication;
 import com.dc.lockphone.R;
 import com.dc.lockphone.model.PhoneInfo;
 import com.dc.lockphone.model.UserInfo;
 import com.dc.lockphone.utils.NetworkUtils;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.lockphone.lockphone.Constants;
 import com.microtripit.mandrillapp.lutung.MandrillApi;
 import com.microtripit.mandrillapp.lutung.model.MandrillApiError;
@@ -31,15 +36,26 @@ import com.microtripit.mandrillapp.lutung.view.MandrillMessageStatus;
 import com.parse.GetCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseACL;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by dcoellar on 9/23/15.
@@ -134,127 +150,158 @@ public class PayActivity extends Activity {
                 if (e == null && object != null) {
                     addDeviceInsurance(object);
                 } else {
-                    Log.e("ERROR", "getDevice:" + e.getMessage());
-
-                    Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
-                    toast.show();
-
-                    pay.setEnabled(true);
-                    progressBarContainer.setVisibility(View.GONE);
+                    reportError("Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", "Error getting device:" + e.getMessage());
                 }
             }
         });
     }
 
     private void addDeviceInsurance(final ParseObject device){
-        //TODO - add logic to select an aseguradora
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aseguradora");
-        query.getFirstInBackground(new GetCallback<ParseObject>() {
+        Boolean pdfGenerated = generatePDF();
+
+        ParseObject deviceInsurance = ParseObject.create("DeviceInsurance");
+        deviceInsurance.put("device", device);
+        deviceInsurance.put("insurance", phoneInfo.getInsuranceValue());
+        deviceInsurance.put("depreciation", phoneInfo.getDepreciation());
+        deviceInsurance.put("deductible", phoneInfo.getDeductible());
+        deviceInsurance.put("price", phoneInfo.getInsuranceMontlyCost());
+        //deviceInsurance.put("aseguradora", object);
+        if (pdfGenerated){
+            File file = new File("/sdcard/contrato.pdf");
+            try {
+                byte[] data = org.apache.commons.io.FileUtils.readFileToByteArray(file);
+                ParseFile parseFile = new ParseFile("contrato.pdf",data);
+                parseFile.saveInBackground();
+                deviceInsurance.put("contrato",parseFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        deviceInsurance.setACL(new ParseACL(ParseUser.getCurrentUser()));
+        deviceInsurance.saveInBackground(new SaveCallback() {
             @Override
-            public void done(ParseObject object, ParseException e) {
-                if (e == null && object != null) {
-                    ParseObject deviceInsurance = ParseObject.create("DeviceInsurance");
-                    deviceInsurance.put("device", device);
-                    deviceInsurance.put("insurance", phoneInfo.getInsuranceValue());
-                    deviceInsurance.put("depreciation", phoneInfo.getDepreciation());
-                    deviceInsurance.put("deductible", phoneInfo.getDeductible());
-                    deviceInsurance.put("price", phoneInfo.getInsuranceMontlyCost());
-                    deviceInsurance.put("aseguradora", object);
-                    deviceInsurance.setACL(new ParseACL(ParseUser.getCurrentUser()));
-                    deviceInsurance.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                signupUser();
-                            } else {
-                                Log.e("ERROR", "addDeviceInsurance:" + e.getMessage());
-
-                                Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
-                                toast.show();
-
-                                pay.setEnabled(true);
-                                progressBarContainer.setVisibility(View.GONE);
-                            }
-                        }
-                    });
-                } else {
-                    Log.e("ERROR", e.getMessage());
-
-                    Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
-                    toast.show();
-
-                    pay.setEnabled(true);
-                    progressBarContainer.setVisibility(View.GONE);
-                }
+            public void done(ParseException e) {
+            if (e == null) {
+                signupUser();
+            } else {
+                reportError("Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", "Error 2 adding device insurance:" + e.getMessage());
+            }
             }
         });
+
+
+        //TODO - add logic to select an aseguradora
+        //ParseQuery<ParseObject> query = ParseQuery.getQuery("Aseguradora");
+        //query.getFirstInBackground(new GetCallback<ParseObject>() {
+        //    @Override
+        //    public void done(ParseObject object, ParseException e) {
+        //        if (e == null && object != null) {
+        //        } else {
+        //            reportError("Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", "Error 1 adding device insurance:" + e.getMessage());
+        //        }
+        //    }
+        //});
     }
 
     private void signupUser(){
         ParseUser.getCurrentUser().setUsername(userInfo.getEmail());
         ParseUser.getCurrentUser().setEmail(userInfo.getEmail());
         ParseUser.getCurrentUser().setPassword(userInfo.getPassword());
+        Crashlytics.getInstance().core.log(Log.INFO, "Lockphone", "current user before sign up:" + ParseUser.getCurrentUser().getObjectId());
         ParseUser.getCurrentUser().signUpInBackground(new SignUpCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+                    Crashlytics.getInstance().core.log(Log.INFO, "Lockphone", "current user before login:" + ParseUser.getCurrentUser().getObjectId());
                     ParseUser.getCurrentUser().logInInBackground(userInfo.getEmail(), userInfo.getPassword(), new LogInCallback() {
                         @Override
                         public void done(ParseUser user, ParseException e) {
                             if (e == null) {
+                                Crashlytics.getInstance().core.log(Log.INFO, "Lockphone", "current user after login:" + ParseUser.getCurrentUser().getObjectId());
                                 ParseUser.getCurrentUser().put("nombre", userInfo.getFullname());
                                 ParseUser.getCurrentUser().put("direccion", userInfo.getAddress());
                                 ParseUser.getCurrentUser().put("telefono", userInfo.getPhone());
                                 ParseUser.getCurrentUser().put("ci_ruc", userInfo.getRuc_ci());
+                                Crashlytics.getInstance().core.log(Log.INFO, "Lockphone", "current user before update:" + ParseUser.getCurrentUser().getObjectId());
                                 ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
 
+                                            Crashlytics.getInstance().core.log(Log.INFO, "Lockphone", "current user after update:" + ParseUser.getCurrentUser().getObjectId());
                                             new SendEmailTask().execute("");
 
                                         } else {
-                                            Log.e("ERROR", "updating user:" + e.getMessage());
-
-                                            Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
-                                            toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
-                                            toast.show();
-
-                                            pay.setEnabled(true);
-                                            progressBarContainer.setVisibility(View.GONE);
+                                            reportError("Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", "Error 3 signing up user:" + e.getMessage());
                                         }
                                     }
                                 });
                             } else {
-                                Log.e("ERROR", "login in:" + e.getMessage());
-
-                                Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
-                                toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
-                                toast.show();
-
-                                pay.setEnabled(true);
-                                progressBarContainer.setVisibility(View.GONE);
+                                reportError("Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", "Error 2 signing up user:" + e.getMessage());
                             }
                         }
                     });
                 } else {
-                    //202 is user already exists
-                    Log.e("ERROR", "signupUser:" + e.getMessage());
-
-                    Toast toast = Toast.makeText(activity.getBaseContext(), "Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
-                    toast.show();
-
-                    pay.setEnabled(true);
-                    progressBarContainer.setVisibility(View.GONE);
+                    reportError("Lo sentimos, no se pudo procesar tu pedido, por favor intenta nuevamente, o contáctenos a info@lockphon.com.", "Error 1 signing up user:" + e.getMessage());
                 }
             }
         });
     }
 
+    private Boolean generatePDF(){
+        try {
+            StringBuilder buf=new StringBuilder();
+            InputStream json=getAssets().open("contrato.htm");
+            BufferedReader in= new BufferedReader(new InputStreamReader(json, "UTF-8"));
+            String str;
+            while ((str=in.readLine()) != null) {
+                buf.append(str);
+            }
+            in.close();
+
+            String k = buf.toString();
+            k = k.replace("$nombre$",userInfo.getFullname());
+            OutputStream file = new FileOutputStream(new File("/sdcard/contrato.pdf"));
+            Document document = new Document();
+            PdfWriter.getInstance(document, file);
+            document.open();
+            HTMLWorker htmlWorker = new HTMLWorker(document);
+            htmlWorker.parse(new StringReader(k));
+            document.close();
+            file.close();
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            final HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("log", "Error generating contract:" + e.getMessage());
+            try {
+                ParseCloud.callFunction("log", params);
+            } catch (ParseException e1) {
+                e1.printStackTrace();
+            }
+
+            return false;
+        }
+    }
+
+    private void reportError(String displayMessage, String logMessage){
+        final HashMap<String, Object> params = new HashMap<String, Object>();
+        params.put("log", logMessage);
+        try {
+            ParseCloud.callFunction("log", params);
+        } catch (ParseException e1) {
+            e1.printStackTrace();
+        }
+
+        Toast toast = Toast.makeText(activity.getBaseContext(), displayMessage, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.TOP | Gravity.CENTER, 0, 100);
+        toast.show();
+
+        pay.setEnabled(true);
+        progressBarContainer.setVisibility(View.GONE);
+    }
 
 
     @Override
@@ -329,30 +376,7 @@ public class PayActivity extends Activity {
 
         @Override
         protected MandrillMessageStatus[] doInBackground(String... params) {
-            MandrillApi mandrillApi = new MandrillApi(Constants.MANDRILL_API_KEY);
-            MandrillMessageStatus[] messageStatusReports = null;
-
-            try {
-                MandrillMessage message = new MandrillMessage();
-                ArrayList<MandrillMessage.Recipient> recipients = new ArrayList<MandrillMessage.Recipient>();
-                MandrillMessage.Recipient recipient = new MandrillMessage.Recipient();
-                recipient.setEmail(userInfo.getEmail());
-                recipient.setName(userInfo.getFullname());
-                recipients.add(recipient);
-                message.setTo(recipients);
-                messageStatusReports = mandrillApi.messages().sendTemplate(Constants.MANDRILL_WELCOME_TEMPLATE,null,message,false,null,null);
-
-            } catch (MandrillApiError mandrillApiError) {
-                Log.d("ERROR","error sending contract email");
-                Log.d("ERROR",mandrillApiError.getMessage());
-                mandrillApiError.printStackTrace();
-            } catch (IOException ex) {
-                Log.d("ERROR","error sending contract email");
-                Log.d("ERROR",ex.getMessage());
-                ex.printStackTrace();
-            } finally {
-                return messageStatusReports;
-            }
+            return sendEmail();
         }
 
         protected void onPostExecute(MandrillMessageStatus[] statuses) {
@@ -366,8 +390,66 @@ public class PayActivity extends Activity {
             toast.show();
 
             Intent i = new Intent(getBaseContext(), HomeRegisteredActivity.class);
+            i.putExtra("new_device",true);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
+        }
+
+        private MandrillMessageStatus[] sendEmail(){
+            MandrillApi mandrillApi = new MandrillApi(Constants.MANDRILL_API_KEY);
+            MandrillMessageStatus[] messageStatusReports = null;
+
+            try {
+
+                MandrillMessage message = new MandrillMessage();
+                ArrayList<MandrillMessage.Recipient> recipients = new ArrayList<MandrillMessage.Recipient>();
+                MandrillMessage.Recipient recipient = new MandrillMessage.Recipient();
+                recipient.setEmail(userInfo.getEmail());
+                recipient.setName(userInfo.getFullname());
+                recipients.add(recipient);
+                message.setTo(recipients);
+
+
+                File file = new File("/sdcard/contrato.pdf");
+                byte[] bytes = org.apache.commons.io.FileUtils.readFileToByteArray(file);
+                String encoded = Base64.encodeToString(bytes, Base64.NO_WRAP);
+                String encodedString = new String(encoded);
+
+                List<MandrillMessage.MessageContent> attachments = new ArrayList<MandrillMessage.MessageContent>();
+                MandrillMessage.MessageContent attachment = new MandrillMessage.MessageContent();
+                attachment.setName("contrato.pdf");
+                attachment.setType("application/pdf");
+                attachment.setBinary(true);
+                attachment.setContent(encodedString);
+                attachments.add(attachment);
+                message.setAttachments(attachments);
+
+
+                messageStatusReports = mandrillApi.messages().sendTemplate(Constants.MANDRILL_WELCOME_TEMPLATE,null,message,false,null,null);
+
+            } catch (MandrillApiError mandrillApiError) {
+                final HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("log", "Error sending email:" + mandrillApiError.getMessage());
+                try {
+                    ParseCloud.callFunction("log", params);
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+
+                mandrillApiError.printStackTrace();
+            } catch (IOException ex) {
+                final HashMap<String, Object> params = new HashMap<String, Object>();
+                params.put("log", "IO Error sending email:" + ex.getMessage());
+                try {
+                    ParseCloud.callFunction("log", params);
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+
+                ex.printStackTrace();
+            } finally {
+                return messageStatusReports;
+            }
         }
     }
 }
