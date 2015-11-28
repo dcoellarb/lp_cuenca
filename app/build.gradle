@@ -25,6 +25,8 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -50,4 +52,6 @@ dependencies {
     compile files('libs/sc-light-jdk15on-1.47.0.2.jar')
     compile files('libs/scpkix-jdk15on-1.47.0.2.jar')
     compile files('libs/scprov-jdk15on-1.47.0.2.jar')
+    compile files('libs/PayPalAndroidSDK-2.12.0.jar')
+    compile 'com.android.support:multidex:1.0.0'
 }

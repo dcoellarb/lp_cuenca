@@ -1,6 +1,6 @@
 package com.dc.lockphone;
 
-import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.crashlytics.android.Crashlytics;
 import com.dc.lockphone.utils.PhoneInfoUtils;
@@ -15,7 +15,7 @@ import io.fabric.sdk.android.Fabric;
 /**
  * Created by dcoellar on 9/23/15.
  */
-public class LockphoneApplication extends Application {
+public class LockphoneApplication extends MultiDexApplication {
 
     private PhoneInfoUtils phoneInfoUtils;
 
