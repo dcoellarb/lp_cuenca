@@ -51,7 +51,9 @@ public class PhoneInfoUtils {
         this.application = app;
     }
 
-
+    /*
+    * Staring point to get the device imei and others
+    * */
     public void getDeviceInfo(){
 
         this.isWorking = true;
@@ -86,6 +88,13 @@ public class PhoneInfoUtils {
         }
     }
 
+    /*
+    * 1.- Check if imei exist in parse
+    * If exists:
+    *   Check if already register and return error
+    *   if not get all data
+    * If it does not exists try to find the brand from parse
+    * */
     private void getImeiFromParse(final String imei){
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Devices");
@@ -128,6 +137,11 @@ public class PhoneInfoUtils {
         });
     }
 
+    /*
+    * 2.- Try to get brand information from parse
+    * If found get all data
+    * If not found try to get it from the site
+    * */
     private void getBrandFromParse(final String imei){
         phoneInfo.setInternal_brand(Build.MANUFACTURER);
         phoneInfo.setInternal_model(Build.MODEL);
@@ -141,54 +155,18 @@ public class PhoneInfoUtils {
                 if (e == null && object != null) {
                     setPhoneInfofromParseBrand(object,imei);
                 } else {
-
                     getBrandFromSite(imei);
-
                 }
             }
         });
 
     }
 
-    private void setPhoneInfofromParseBrand(ParseObject brand, String imei){
-        phoneInfo.setBrand(brand.getString("brand"));
-        phoneInfo.setModel(brand.getString("model"));
-        phoneInfo.setInternal_brand(brand.getString("internalBrand"));
-        phoneInfo.setInternal_model(brand.getString("internalModel"));
-        phoneInfo.setImageUrl(brand.getString("imageUrl"));
-
-        Calendar today = Calendar.getInstance();
-        int todayYear = today.get(Calendar.YEAR);
-        int year = brand.getInt("year");
-
-        Double insurance = brand.getDouble("insurance");
-        Double depreciation = brand.getDouble("depreciation");
-        Double depreciationValue = (todayYear - year) * (insurance * (depreciation/100));
-        Double deductible = brand.getDouble("deductible");
-        Double insuranceValue = insurance - depreciationValue;
-        Double price = brand.getDouble("price");
-
-        if (insurance > 0 && depreciation > 0 && deductible > 0 && price > 0){
-            phoneInfo.setInsuranceValue(insuranceValue);
-            phoneInfo.setDepreciation(depreciationValue);
-            phoneInfo.setDeductible(deductible);
-            phoneInfo.setInsuranceMontlyCost(price);
-
-            if (imei != null){
-                final ParseObject parseDevice = new ParseObject("Devices");
-                parseDevice.put("imei", imei);
-                parseDevice.put("brand", brand);
-                parseDevice.put("user", ParseUser.getCurrentUser());
-                parseDevice.saveInBackground();
-            }
-
-            callListeners();
-        }else{
-            //TODO - calculate device insurance
-            phoneInfo.setError(PhoneInfoError.NO_BRAND_INSURANCE_DATA);
-        }
-    }
-
+    /*
+    * 3.- Try to get all information from site and calculate prices
+    * If found get all data
+    * If not found try to get it from the site
+    * */
     private void getBrandFromSite(final String imei){
 
         try {
@@ -317,41 +295,81 @@ public class PhoneInfoUtils {
         }
     }
 
+    /*
+    * Once all data is obtained or calculated save it locally
+    * */
+    private void setPhoneInfofromParseBrand(ParseObject brand, String imei){
+        phoneInfo.setBrand(brand.getString("brand"));
+        phoneInfo.setModel(brand.getString("model"));
+        phoneInfo.setInternal_brand(brand.getString("internalBrand"));
+        phoneInfo.setInternal_model(brand.getString("internalModel"));
+        phoneInfo.setImageUrl(brand.getString("imageUrl"));
+
+        Calendar today = Calendar.getInstance();
+        int todayYear = today.get(Calendar.YEAR);
+        int year = brand.getInt("year");
+
+        Double insurance = brand.getDouble("insurance");
+        Double depreciation = brand.getDouble("depreciation");
+        Double depreciationValue = (todayYear - year) * (insurance * (depreciation/100));
+        Double deductible = brand.getDouble("deductible");
+        Double insuranceValue = insurance - depreciationValue;
+        Double price = brand.getDouble("price");
+
+        phoneInfo.setInsuranceValue(insuranceValue);
+        phoneInfo.setDepreciation(depreciationValue);
+        phoneInfo.setDeductible(deductible);
+        phoneInfo.setInsuranceMontlyCost(price);
+
+        if (imei != null){
+            final ParseObject parseDevice = new ParseObject("Devices");
+            parseDevice.put("imei", imei);
+            parseDevice.put("brand", brand);
+            parseDevice.put("user", ParseUser.getCurrentUser());
+            parseDevice.saveInBackground();
+        }
+
+        callListeners();
+    }
+
+    /*
+    * And call listeners in case they are waiting
+    * */
     private void callListeners(){
 
         this.isWorking = false;
-
         for (IGetPhoneInfoListener listener : listeners) {
             listener.getPhoneInfoCallback();
         }
 
     }
 
-
+    /*
+    * Imei services
+    * */
     public interface IMEIService {
         @FormUrlEncoded
         @POST("/checkimei/")
         void getPhoneInfo(@Query("user") String user,@Query("password") String password,@Field("imei") String imei,Callback<JsonElement> cb);
     }
-
     public interface IMEISite {
         @GET("/")
         void getPhoneInfo(@Query("imei") String imei,Callback<String> cb);
     }
 
 
+    /*
+    * Pproperties
+    * */
     public PhoneInfo getPhoneInfo() {
         return phoneInfo;
     }
-
     public void setPhoneInfo(PhoneInfo phoneInfo) {
         this.phoneInfo = phoneInfo;
     }
-
     public void addListener(IGetPhoneInfoListener listener) {
         listeners.add(listener);
     }
-
     public Boolean getIsWorking() {
         return isWorking;
     }
